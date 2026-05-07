@@ -1,6 +1,6 @@
 # Compound Poisson Insurance Loss Simulation
 
-**Course:** Stochastic Processes — Final Project  
+**Course:** Stochastic Processes — Math 5652  
 **Author:** Ethan Schmitz  
 **Date:** Spring 2026
 
@@ -8,12 +8,12 @@
 
 ## Overview
 
-This project models aggregate insurance losses using a **Compound Poisson Process** — the standard actuarial frequency-severity framework:
+My fianl project is modeling insurance losses an actuary like I'm studying to be would see. The losses use a compound poisson proccess, which we have individually seen in class. In my actuary math in practice class we have seen similar models to what I have worked with in this project. One way the insurance companies will calculate their projected ultimate losses is through frequency/severity method which involves using a model like a poisson to find averages to genarlize their patrons costs. Specificaly the following formula was the base framework and idea behind the project like we have seen throughout this semester:
 
 $$S(t) = \sum_{i=1}^{N(t)} X_i$$
 
-- **N(t) ~ Poisson(λt)** — random number of claims arriving in [0, t]
-- **X_i ~ F_X** — i.i.d. random claim sizes, independent of N
+- **N(t) ~ Poisson(λt)** — represents a random number of claims arriving in [0, t]
+- **X<sub>i</sub> ~ F<sub>X</sub>** — i.i.d. random claim sizes, independent of N
 
 Using Monte Carlo simulation (50,000 paths), we estimate the full **distribution** of total losses S(t) and compute key actuarial risk metrics, rather than relying on a single-point deterministic estimate.
 
@@ -102,7 +102,7 @@ The simulation is validated against these closed-form expressions.
 
 ## Output Figures
 
-| File | Description |
+File | Description |
 |---|---|
 | `01_loss_distribution.png` | Histogram + KDE of S(t) with Normal approximation |
 | `02_var_cvar_95.png` | Loss distribution with 95% VaR and CVaR annotated |
@@ -119,9 +119,9 @@ The simulation is validated against these closed-form expressions.
 ## Example Console Output
 
 ```
-=================================================================
+
 SECTION 1: Base Compound Poisson Simulation
-=================================================================
+
   lambda = 10 claims/yr | t = 1 yr | Mean severity = $1,000 | CV = 1.5
 
   Running 50,000 Monte Carlo simulations ...
@@ -152,6 +152,8 @@ pandas>=2.0
 
 ## References
 
-1. Ross, S.M. *Introduction to Probability Models* — compound Poisson process (Ch. 5)
-2. Klugman, S.A. et al. *Loss Models: From Data to Decisions* — frequency-severity framework
-3. McNeil, A.J. et al. *Quantitative Risk Management* — VaR, CVaR, and coherent risk measures
+1. Essentials of Stochastic Processes Third Edition (Richard Durrett)
+2. https://www.kwcsangli.in/uploads/4--introduction-to-probability-model-s.ross-math-cs.blog_.ir_.pdf
+3. https://mukuba2002.wordpress.com/wp-content/uploads/2012/03/44850471215775.pdf
+4. https://ndl.ethernet.edu.et/bitstream/123456789/30397/1/141.Alexander%20J.McNeil.pdf
+5. https://www.freecodecamp.org/news/how-to-write-a-good-readme-file/
