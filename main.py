@@ -123,9 +123,7 @@ def section_1_base_simulation():
     return losses, sev_fn
 
 
-# ─────────────────────────────────────────────────────────────────────────────
-# SECTION 2 — Severity Distribution Comparison
-# ─────────────────────────────────────────────────────────────────────────────
+
 
 def section_2_severity_comparison():
     print("\n" + "="*65)
@@ -133,10 +131,10 @@ def section_2_severity_comparison():
     print("="*65)
 
     severity_functions = {
-        f"Exponential":           exponential_severity(mean=MEAN_SEVERITY),
+        f"Exponential":  exponential_severity(mean=MEAN_SEVERITY),
         f"Lognormal (cv={CV_SEVERITY})": lognormal_severity(mean=MEAN_SEVERITY, cv=CV_SEVERITY),
-        f"Gamma (cv={CV_SEVERITY})":     gamma_severity(mean=MEAN_SEVERITY, cv=CV_SEVERITY),
-        f"Pareto (alpha=3)":       pareto_severity(mean=MEAN_SEVERITY, alpha=3.0),
+        f"Gamma (cv={CV_SEVERITY})": gamma_severity(mean=MEAN_SEVERITY, cv=CV_SEVERITY),
+        f"Pareto (alpha=3)": pareto_severity(mean=MEAN_SEVERITY, alpha=3.0),
     }
 
     print(f"\n  Running {N_SIM:,} simulations per distribution ...")
@@ -155,7 +153,7 @@ def section_3_sensitivity():
     print("SECTION 3: Sensitivity Analysis — Varying Claim Frequency λ")
     print("="*65)
 
-    sev_fn     = lognormal_severity(mean=MEAN_SEVERITY, cv=CV_SEVERITY)
+    sev_fn = lognormal_severity(mean=MEAN_SEVERITY, cv=CV_SEVERITY)
     lam_values = [2, 5, 10, 20, 50]
 
     print(f"\n  Sweeping lambda over {lam_values} ...")
