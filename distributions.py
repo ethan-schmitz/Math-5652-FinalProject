@@ -1,16 +1,15 @@
 """
 distributions.py
-================
+
 Factory functions that return severity_fn callables of the signature:
 
     severity_fn(n: int, rng: np.random.Generator) -> np.ndarray of shape (n,)
 
-Each factory creates and returns one such function, fully configured with
-its parameters.  This design keeps simulation.py clean and makes it trivial
+Each factory creates and returns one such function, with all
+its parameters. This design keeps simulation.py clean and makes it easier
 to swap or compare severity models.
 
 Supported distributions
------------------------
 1. Exponential   – memoryless, simplest model, light tail
 2. Lognormal     – heavier tail, common for property/casualty losses
 3. Gamma         – flexible two-parameter model
@@ -22,11 +21,6 @@ spread parameter) so that comparisons across distributions are apples-to-apples.
 """
 
 import numpy as np
-
-
-# ─────────────────────────────────────────────────────────────────────────────
-# 1. Exponential  Exp(mean)
-# ─────────────────────────────────────────────────────────────────────────────
 
 def exponential_severity(mean: float):
     """
@@ -47,15 +41,11 @@ def exponential_severity(mean: float):
     return _sample
 
 
-# ─────────────────────────────────────────────────────────────────────────────
-# 2. Lognormal  LN(mu, sigma)
-# ─────────────────────────────────────────────────────────────────────────────
-
 def lognormal_severity(mean: float, cv: float = 1.0):
     """
     Lognormal severity parameterised by its mean and coefficient of variation.
 
-    CV = std / mean.  cv=1.0 is a common default in insurance.
+    CV = std / mean.  cv = 1.0 is a common default in insurance.
     The lognormal produces a right-skewed distribution — most claims are
     small but occasionally very large ones occur, which is realistic.
 
@@ -77,11 +67,6 @@ def lognormal_severity(mean: float, cv: float = 1.0):
     _sample.mean = mean
     _sample.variance = (cv * mean) ** 2
     return _sample
-
-
-# ─────────────────────────────────────────────────────────────────────────────
-# 3. Gamma  Gamma(alpha, theta)
-# ─────────────────────────────────────────────────────────────────────────────
 
 def gamma_severity(mean: float, cv: float = 1.0):
     """
@@ -105,10 +90,6 @@ def gamma_severity(mean: float, cv: float = 1.0):
     _sample.variance = (cv * mean) ** 2
     return _sample
 
-
-# ─────────────────────────────────────────────────────────────────────────────
-# 4. Pareto  (single-parameter, heavy-tailed)
-# ─────────────────────────────────────────────────────────────────────────────
 
 def pareto_severity(mean: float, alpha: float = 3.0):
     """
@@ -144,10 +125,6 @@ def pareto_severity(mean: float, alpha: float = 3.0):
     return _sample
 
 
-# ─────────────────────────────────────────────────────────────────────────────
-# 5. Weibull
-# ─────────────────────────────────────────────────────────────────────────────
-
 def weibull_severity(mean: float, shape: float = 1.5):
     """
     Weibull severity parameterised by mean and shape k.
@@ -172,9 +149,6 @@ def weibull_severity(mean: float, shape: float = 1.5):
     return _sample
 
 
-# ─────────────────────────────────────────────────────────────────────────────
-# Convenience registry
-# ─────────────────────────────────────────────────────────────────────────────
 
 SEVERITY_DISTRIBUTIONS = {
     "exponential": exponential_severity,
