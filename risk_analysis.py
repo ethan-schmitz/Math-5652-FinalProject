@@ -104,9 +104,6 @@ def ruin_probability(losses: np.ndarray, threshold: float) -> float:
     return float(np.mean(losses > threshold))
 
 
-# ─────────────────────────────────────────────────────────────────────────────
-# 5. Stop-Loss (Excess-of-Loss) Premium
-# ─────────────────────────────────────────────────────────────────────────────
 
 def stop_loss_premium(losses: np.ndarray, deductible: float) -> float:
     """
@@ -128,9 +125,6 @@ def stop_loss_premium(losses: np.ndarray, deductible: float) -> float:
     return float(np.mean(excess))
 
 
-# ─────────────────────────────────────────────────────────────────────────────
-# 6. Safety Loading / Required Capital Buffer
-# ─────────────────────────────────────────────────────────────────────────────
 
 def safety_loading(losses: np.ndarray, confidence: float = 0.99) -> dict:
     """
