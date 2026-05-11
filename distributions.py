@@ -10,11 +10,11 @@ its parameters. This design keeps simulation.py clean and makes it easier
 to swap or compare severity models.
 
 Supported distributions
-1. Exponential   – memoryless, simplest model, light tail
-2. Lognormal     – heavier tail, common for property/casualty losses
-3. Gamma         – flexible two-parameter model
-4. Pareto        – heavy-tailed, used for catastrophic / reinsurance losses
-5. Weibull       – flexible shape, used in reliability and loss modeling
+1. Exponential – memoryless, simplest model, light tail
+2. Lognormal – heavier tail, common for property/casualty losses
+3. Gamma – flexible two-parameter model
+4. Pareto – heavy-tailed, used for catastrophic / reinsurance losses
+5. Weibull – flexible shape, used in reliability and loss modeling
 
 All distributions are parameterised by their MEAN (and optionally a shape /
 spread parameter) so that comparisons across distributions are apples-to-apples.
@@ -30,8 +30,8 @@ def exponential_severity(mean: float):
     some threshold tells you nothing about how much more it will exceed it.
     This is the simplest severity model and a common starting point.
 
-    Mean  = mean
-    Var   = mean²
+    Mean = mean
+    Var = mean²
     """
     def _sample(n: int, rng: np.random.Generator) -> np.ndarray:
         return rng.exponential(scale=mean, size=n)
@@ -57,8 +57,8 @@ def lognormal_severity(mean: float, cv: float = 1.0):
     Var   = (cv * mean)²
     """
     sigma2 = np.log(1 + cv ** 2)
-    sigma  = np.sqrt(sigma2)
-    mu     = np.log(mean) - sigma2 / 2.0
+    sigma = np.sqrt(sigma2)
+    mu = np.log(mean) - sigma2 / 2.0
 
     def _sample(n: int, rng: np.random.Generator) -> np.ndarray:
         return rng.lognormal(mean=mu, sigma=sigma, size=n)
@@ -100,8 +100,8 @@ def pareto_severity(mean: float, alpha: float = 3.0):
     and catastrophe modelling.
 
     For a Pareto with shape alpha and scale xm:
-      mean  = alpha * xm / (alpha - 1)   [requires alpha > 1]
-      var   = alpha * xm² / ((alpha-1)²*(alpha-2))  [requires alpha > 2]
+      mean = alpha * xm / (alpha - 1)   [requires alpha > 1]
+      var = alpha * xm² / ((alpha-1)²*(alpha-2))  [requires alpha > 2]
 
     We solve for xm given the desired mean.
     """
