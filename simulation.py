@@ -1,6 +1,6 @@
 """
 simulation.py
-=============
+
 Core engine for the Compound Poisson aggregate loss model.
 
     S(t) = sum_{i=1}^{N(t)} X_i
@@ -15,11 +15,6 @@ a full DISTRIBUTION of total losses rather than a single point estimate.
 
 import numpy as np
 from typing import Callable, Optional
-
-
-# ─────────────────────────────────────────────────────────────────────────────
-# 1. Single-Path Simulation
-# ─────────────────────────────────────────────────────────────────────────────
 
 def simulate_aggregate_loss(
     lam: float,
@@ -37,14 +32,12 @@ def simulate_aggregate_loss(
       4. Return  S(t) = X_1 + ... + X_N
 
     Parameters
-    ----------
-    lam         : Poisson arrival rate (claims per unit time).
-    t           : Observation window length.
-    severity_fn : (n, rng) -> ndarray of shape (n,). See distributions.py.
-    rng         : Shared numpy Generator for reproducibility.
+    lam: Poisson arrival rate (claims per unit time).
+    t: Observation window length.
+    severity_fn: (n, rng) -> ndarray of shape (n,). See distributions.py.
+    rng: Shared numpy Generator for reproducibility.
 
     Returns
-    -------
     float : S(t) for this single path.
     """
     n_claims: int = rng.poisson(lam * t)  # Step 1: how many claims?
@@ -55,10 +48,6 @@ def simulate_aggregate_loss(
     severities = severity_fn(n_claims, rng)  # Step 3: draw claim sizes
     return float(np.sum(severities))          # Step 4: sum them up
 
-
-# ─────────────────────────────────────────────────────────────────────────────
-# 2. Monte Carlo Wrapper  (the main workhorse)
-# ─────────────────────────────────────────────────────────────────────────────
 
 def monte_carlo_simulation(
     lam: float,
@@ -74,15 +63,13 @@ def monte_carlo_simulation(
     the true distribution of S(t) as n_simulations → ∞.
 
     Parameters
-    ----------
-    lam            : Poisson arrival rate.
-    t              : Observation window.
-    severity_fn    : Severity sampling function (distributions.py).
-    n_simulations  : Number of Monte Carlo replications.
-    seed           : Random seed (None = non-reproducible).
+    lam: Poisson arrival rate.
+    t: Observation window.
+    severity_fn: Severity sampling function (distributions.py).
+    n_simulations: Number of Monte Carlo replications.
+    seed: Random seed (None = non-reproducible).
 
     Returns
-    -------
     np.ndarray of shape (n_simulations,)
     """
     rng = np.random.default_rng(seed)
@@ -91,10 +78,6 @@ def monte_carlo_simulation(
         losses[i] = simulate_aggregate_loss(lam, t, severity_fn, rng)
     return losses
 
-
-# ─────────────────────────────────────────────────────────────────────────────
-# 3. Sensitivity / Parameter Sweep
-# ─────────────────────────────────────────────────────────────────────────────
 
 def parameter_sweep(
     base_lam: float,
@@ -113,12 +96,10 @@ def parameter_sweep(
     model inputs drive risk the most.
 
     Parameters
-    ----------
-    param_name  : 'lambda' to sweep arrival rate, 't' to sweep time.
+    param_name: 'lambda' to sweep arrival rate, 't' to sweep time.
     param_values: e.g. [5, 10, 20, 50]
 
     Returns
-    -------
     dict { param_value : np.ndarray of shape (n_simulations,) }
     """
     if param_name not in ("lambda", "t"):
@@ -133,10 +114,6 @@ def parameter_sweep(
         )
     return results
 
-
-# ─────────────────────────────────────────────────────────────────────────────
-# 4. Closed-Form Theoretical Moments  (used to validate the simulation)
-# ─────────────────────────────────────────────────────────────────────────────
 
 def theoretical_mean(lam: float, t: float, mean_severity: float) -> float:
     """
