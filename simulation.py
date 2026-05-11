@@ -26,9 +26,9 @@ def simulate_aggregate_loss(
     Simulate one realisation of S(t).
 
     Algorithm:
-      1. Draw  N ~ Poisson(lambda * t)            ← claim COUNT
+      1. Draw  N ~ Poisson(lambda * t) - claim COUNT
       2. If N = 0, return 0.0 immediately
-      3. Draw  X_1, ..., X_N  from severity_fn    ← claim SIZES
+      3. Draw  X_1, ..., X_N  from severity_fn - claim SIZES
       4. Return  S(t) = X_1 + ... + X_N
 
     Parameters
