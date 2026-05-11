@@ -40,12 +40,12 @@ from visualization import (plot_loss_distribution, plot_var_cvar,
 
 
 # Base model parameters
-LAM  = 10       # arrival rate: 10 claims per year on average
-T    = 1.0      # observation window: 1 year
-MEAN_SEVERITY = 1_000.0   # average claim size: $1,000
-CV_SEVERITY   = 1.5       # coefficient of variation of claim sizes
-N_SIM = 50_000  # Monte Carlo replications
-SEED  = 42      # for full reproducibility
+LAM  = 10    # arrival rate: 10 claims per year on average
+T    = 1.0    # observation window: 1 year
+MEAN_SEVERITY = 1_000.0    # average claim size: $1,000
+CV_SEVERITY   = 1.5    # coefficient of variation of claim sizes
+N_SIM = 50_000    # Monte Carlo replications
+SEED  = 42    # for full reproducibility
 
 # Output directory for figures
 FIG_DIR = "./figures"
