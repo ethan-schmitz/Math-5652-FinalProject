@@ -1,10 +1,9 @@
 """
 main.py
-=======
+
 Entry point for the Compound Poisson Insurance Loss Simulation project.
 
 What this script does
----------------------
 1. Defines base model parameters (lambda, t, severity distribution).
 2. Runs the Monte Carlo simulation (50,000 paths).
 3. Computes and prints all key risk metrics.
@@ -14,11 +13,9 @@ What this script does
 7. Saves all figures to ./figures/.
 
 How to run
-----------
     python main.py
 
 Output
-------
   - Console: printed summary tables
   - ./figures/: all plots as .png files
 """
@@ -41,9 +38,6 @@ from visualization import (plot_loss_distribution, plot_var_cvar,
                            plot_sensitivity, plot_convergence,
                            plot_ruin_curve)
 
-# ─────────────────────────────────────────────────────────────────────────────
-# Project Configuration
-# ─────────────────────────────────────────────────────────────────────────────
 
 # Base model parameters
 LAM  = 10       # arrival rate: 10 claims per year on average
@@ -58,20 +52,12 @@ FIG_DIR = "./figures"
 os.makedirs(FIG_DIR, exist_ok=True)
 
 
-# ─────────────────────────────────────────────────────────────────────────────
-# Helper: save figure
-# ─────────────────────────────────────────────────────────────────────────────
-
 def save(fig: plt.Figure, name: str):
     path = os.path.join(FIG_DIR, name)
     fig.savefig(path, bbox_inches="tight")
     print(f"  [saved] {path}")
     plt.close(fig)
 
-
-# ─────────────────────────────────────────────────────────────────────────────
-# SECTION 1 — Base Simulation (Lognormal severity)
-# ─────────────────────────────────────────────────────────────────────────────
 
 def section_1_base_simulation():
     print("\n" + "="*65)
@@ -87,7 +73,7 @@ def section_1_base_simulation():
     print(f"\n  Running {N_SIM:,} Monte Carlo simulations ...")
     losses = monte_carlo_simulation(LAM, T, sev_fn, N_SIM, SEED)
 
-    # ── Simulated vs theoretical moments ──────────────────────────────
+    # Simulated vs theoretical moments 
     theo_mean = theoretical_mean(LAM, T, sev_fn.mean)
     theo_std  = theoretical_std(LAM, T, sev_fn.mean, sev_fn.variance)
 
@@ -97,7 +83,7 @@ def section_1_base_simulation():
     print(f"    Std:    simulated = ${np.std(losses):>10,.2f}  |  "
           f"theoretical = ${theo_std:>10,.2f}")
 
-    # ── Risk metrics ──────────────────────────────────────────────────
+    # Risk metrics
     print("\n  Key Risk Metrics:")
     for p in [0.90, 0.95, 0.99, 0.995]:
         var  = value_at_risk(losses, p)
@@ -105,26 +91,26 @@ def section_1_base_simulation():
         print(f"    VaR {int(p*100):3d}% = ${var:>10,.2f}  |  "
               f"CVaR {int(p*100):3d}% = ${cvar:>10,.2f}")
 
-    # ── Ruin probabilities at various reserve levels ──────────────────
+    # Ruin probabilities at various reserve levels
     print("\n  Ruin Probabilities:")
     reserves = [theo_mean * m for m in [1.5, 2.0, 2.5, 3.0]]
     for r in reserves:
         pr = ruin_probability(losses, r)
         print(f"    P(S > ${r:>9,.0f}) = {pr*100:.3f}%")
 
-    # ── Stop-loss premiums ────────────────────────────────────────────
+    # Stop-loss premiums 
     print("\n  Stop-Loss (Reinsurance) Premiums:")
     deductibles = [theo_mean * m for m in [1.0, 1.5, 2.0]]
     for d in deductibles:
         sl = stop_loss_premium(losses, d)
         print(f"    E[max(S - ${d:>8,.0f}, 0)] = ${sl:>8,.2f}")
 
-    # ── Full summary table ────────────────────────────────────────────
+    # Full summary table
     print("\n  Full Summary Table:")
     df = full_summary(losses, LAM, T, sev_fn)
     print(df.to_string(index=False))
 
-    # ── Plots ─────────────────────────────────────────────────────────
+    # Plots 
     print("\n  Generating plots ...")
     save(plot_loss_distribution(losses, title="Aggregate Losses — Lognormal Severity"),
          "01_loss_distribution.png")
@@ -164,10 +150,6 @@ def section_2_severity_comparison():
     save(plot_severity_comparison(loss_arrays), "07_severity_comparison.png")
 
 
-# ─────────────────────────────────────────────────────────────────────────────
-# SECTION 3 — Sensitivity Analysis (varying lambda)
-# ─────────────────────────────────────────────────────────────────────────────
-
 def section_3_sensitivity():
     print("\n" + "="*65)
     print("SECTION 3: Sensitivity Analysis — Varying Claim Frequency λ")
@@ -205,10 +187,6 @@ def section_3_sensitivity():
     save(plot_sensitivity(t_sweep, param_name="Time Horizon  t  (years)"),
          "09_sensitivity_t.png")
 
-
-# ─────────────────────────────────────────────────────────────────────────────
-# Main
-# ─────────────────────────────────────────────────────────────────────────────
 
 if __name__ == "__main__":
     print("\n" + "#"*65)
