@@ -5,13 +5,13 @@ Actuarial risk metrics computed from an empirical loss distribution
 (a numpy array produced by simulation.py).
 
 Metrics implemented
-1.  Descriptive summary     – mean, std, skewness, kurtosis
-2.  Value at Risk (VaR)     – loss threshold not exceeded with probability p
-3.  Conditional VaR (CVaR)  – expected loss GIVEN we are in the tail (TVaR)
-4.  Probability of ruin     – P(S(t) > threshold)
-5.  Stop-loss premium       – E[max(S(t) - d, 0)]  (excess-of-loss reinsurance)
-6.  Safety loading          – how much capital above the mean is needed
-7.  Full summary table      – DataFrame with all key stats
+1.  Descriptive summary – mean, std, skewness, kurtosis
+2.  Value at Risk (VaR) – loss threshold not exceeded with probability p
+3.  Conditional VaR (CVaR) – expected loss GIVEN we are in the tail (TVaR)
+4.  Probability of ruin – P(S(t) > threshold)
+5.  Stop-loss premium – E[max(S(t) - d, 0)]  (excess-of-loss reinsurance)
+6.  Safety loading – how much capital above the mean is needed
+7.  Full summary table – DataFrame with all key stats
 """
 
 import numpy as np
@@ -29,14 +29,14 @@ def descriptive_stats(losses: np.ndarray) -> dict:
     from scipy import stats as sp_stats
     return {
         "n_simulations": len(losses),
-        "mean":          float(np.mean(losses)),
-        "std":           float(np.std(losses)),
-        "median":        float(np.median(losses)),
-        "min":           float(np.min(losses)),
-        "max":           float(np.max(losses)),
-        "skewness":      float(sp_stats.skew(losses)),
-        "kurtosis":      float(sp_stats.kurtosis(losses)),  # excess kurtosis
-        "p_zero_loss":   float(np.mean(losses == 0.0)),     # P(N=0)
+        "mean": float(np.mean(losses)),
+        "std": float(np.std(losses)),
+        "median": float(np.median(losses)),
+        "min": float(np.min(losses)),
+        "max": float(np.max(losses)),
+        "skewness": float(sp_stats.skew(losses)),
+        "kurtosis": float(sp_stats.kurtosis(losses)),  # excess kurtosis
+        "p_zero_loss": float(np.mean(losses == 0.0)),     # P(N=0)
     }
 
 
