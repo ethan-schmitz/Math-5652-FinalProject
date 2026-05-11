@@ -152,6 +152,11 @@ matplotlib>=3.7
 pandas>=2.0
 ```
 
+```
+## AI Usage
+
+Within this project I used AI for a few helpful structure setups. One of my uses of AI was to generate a format of how a simulation of multiple events and what helper functions I would need in order to code this sort of project. With this it helped me find useful plug ins and imports that can level up what kind of distributions I can use as there are were more intricate functions that aren't just in basic python. As I am a computer science minor I do know a good amount of code and the general idea of how to code, but with this help I was able to achieve something that wouldn't really be in my knowledge range as of now. The other use was to format this README document. I've used github once previously and rembered somehow to set it up and looked up how to import the files and things from visual studio, but I didn't know how to format this document. I used my own research on a helper website and a little bit of AI to make it look better and portray the things I wanted. These were the two things I used AI to assist with my project.
+
 ---
 
 ## References
