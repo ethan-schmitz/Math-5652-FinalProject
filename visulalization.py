@@ -1,20 +1,18 @@
 """
 visualization.py
-================
 All plotting functions for the compound Poisson insurance loss project.
 
 Each function takes a simulated loss array (or sweep dict) as input and
 produces a matplotlib figure.  Call plt.show() or fig.savefig() after.
 
 Plots implemented
------------------
-1.  plot_loss_distribution   – histogram + KDE of S(t)
-2.  plot_var_cvar             – annotated histogram with VaR/CVaR lines
-3.  plot_ecdf                 – empirical CDF with confidence bands
-4.  plot_severity_comparison  – overlaid histograms for multiple severity dists.
-5.  plot_sensitivity          – boxplots or lines for a parameter sweep
-6.  plot_convergence          – how mean/VaR stabilise as n_sim increases
-7.  plot_ruin_curve           – ruin probability vs. threshold level
+1.  plot_loss_distribution – histogram + KDE of S(t)
+2.  plot_var_cvar – annotated histogram with VaR/CVaR lines
+3.  plot_ecdf – empirical CDF with confidence bands
+4.  plot_severity_comparison – overlaid histograms for multiple severity dists.
+5.  plot_sensitivity  – boxplots or lines for a parameter sweep
+6.  plot_convergence – how mean/VaR stabilise as n_sim increases
+7.  plot_ruin_curve – ruin probability vs. threshold level
 """
 
 import numpy as np
@@ -43,9 +41,6 @@ plt.rcParams.update({
 })
 
 
-# ─────────────────────────────────────────────────────────────────────────────
-# Helper
-# ─────────────────────────────────────────────────────────────────────────────
 
 def _kde(losses: np.ndarray, n_points: int = 500):
     """Return (x_grid, density) for a kernel-density estimate."""
@@ -55,9 +50,6 @@ def _kde(losses: np.ndarray, n_points: int = 500):
     return x, kde(x)
 
 
-# ─────────────────────────────────────────────────────────────────────────────
-# 1. Loss Distribution  (histogram + KDE)
-# ─────────────────────────────────────────────────────────────────────────────
 
 def plot_loss_distribution(
     losses: np.ndarray,
@@ -73,15 +65,15 @@ def plot_loss_distribution(
     """
     fig, ax = plt.subplots(figsize=(10, 5))
 
-    # --- Histogram ---
+    # Histogram
     ax.hist(losses, bins=bins, density=True,
             color=COLORS["primary"], alpha=0.4, label="Simulated losses")
 
-    # --- KDE overlay ---
+    # KDE overlay
     x_kde, y_kde = _kde(losses)
     ax.plot(x_kde, y_kde, color=COLORS["primary"], lw=2, label="KDE")
 
-    # --- Normal approximation ---
+    # Normal approximation
     if show_normal_approx:
         from scipy.stats import norm
         mu, sigma = np.mean(losses), np.std(losses)
@@ -90,7 +82,7 @@ def plot_loss_distribution(
                 color=COLORS["danger"], lw=1.5, ls="--",
                 label=f"Normal approx  (μ={mu:,.0f}, σ={sigma:,.0f})")
 
-    # --- Mean line ---
+    # Mean line
     ax.axvline(np.mean(losses), color=COLORS["muted"], ls=":", lw=1.5,
                label=f"Mean = ${np.mean(losses):,.2f}")
 
@@ -102,9 +94,6 @@ def plot_loss_distribution(
     return fig
 
 
-# ─────────────────────────────────────────────────────────────────────────────
-# 2. VaR / CVaR Annotated Plot
-# ─────────────────────────────────────────────────────────────────────────────
 
 def plot_var_cvar(
     losses: np.ndarray,
@@ -119,34 +108,34 @@ def plot_var_cvar(
     """
     from risk_analysis import value_at_risk, conditional_var
 
-    var  = value_at_risk(losses, confidence)
+    var = value_at_risk(losses, confidence)
     cvar = conditional_var(losses, confidence)
 
     fig, ax = plt.subplots(figsize=(10, 5))
 
-    # --- Base histogram ---
+    # Base histogram
     n, bins_arr, patches = ax.hist(losses, bins=bins, density=True,
                                    color=COLORS["light"], edgecolor="white")
 
-    # --- Shade the tail (losses > VaR) ---
+    # Dhade the tail (losses > VaR)
     for patch, left in zip(patches, bins_arr[:-1]):
         if left >= var:
             patch.set_facecolor(COLORS["danger"])
             patch.set_alpha(0.7)
 
-    # --- KDE ---
+    # KDE
     x_kde, y_kde = _kde(losses)
     ax.plot(x_kde, y_kde, color=COLORS["primary"], lw=2)
 
-    # --- VaR line ---
+    # VaR line
     ax.axvline(var, color=COLORS["warning"], lw=2, ls="--",
                label=f"VaR {int(confidence*100)}% = ${var:,.2f}")
 
-    # --- CVaR line ---
+    # CVaR line
     ax.axvline(cvar, color=COLORS["danger"], lw=2, ls="-",
                label=f"CVaR {int(confidence*100)}% = ${cvar:,.2f}")
 
-    # --- Shade label ---
+    # Shade label
     tail_prob = 1 - confidence
     ax.annotate(
         f"Tail ({tail_prob*100:.0f}% of scenarios)",
@@ -161,10 +150,6 @@ def plot_var_cvar(
     fig.tight_layout()
     return fig
 
-
-# ─────────────────────────────────────────────────────────────────────────────
-# 3. Empirical CDF
-# ─────────────────────────────────────────────────────────────────────────────
 
 def plot_ecdf(
     losses: np.ndarray,
@@ -200,10 +185,6 @@ def plot_ecdf(
     return fig
 
 
-# ─────────────────────────────────────────────────────────────────────────────
-# 4. Severity Distribution Comparison
-# ─────────────────────────────────────────────────────────────────────────────
-
 def plot_severity_comparison(
     loss_arrays: dict,   # { label: np.ndarray }
     bins: int = 80,
@@ -213,7 +194,6 @@ def plot_severity_comparison(
     Useful for showing how the choice of severity distribution impacts risk.
 
     Parameters
-    ----------
     loss_arrays : dict mapping distribution name → simulated loss array.
     """
     palette = [COLORS["primary"], COLORS["secondary"],
@@ -221,7 +201,7 @@ def plot_severity_comparison(
 
     fig, axes = plt.subplots(1, 2, figsize=(14, 5))
 
-    # --- KDE overlays ---
+    # KDE overlays
     for (label, losses), color in zip(loss_arrays.items(), palette):
         x_kde, y_kde = _kde(losses)
         axes[0].plot(x_kde, y_kde, lw=2, color=color, label=label)
@@ -232,7 +212,7 @@ def plot_severity_comparison(
     axes[0].set_title("Loss Distributions by Severity Model")
     axes[0].legend(fontsize=9)
 
-    # --- VaR comparison bar chart ---
+    # VaR comparison bar chart
     labels  = list(loss_arrays.keys())
     var_99  = [float(np.quantile(v, 0.99)) for v in loss_arrays.values()]
     cvar_99 = []
@@ -254,10 +234,6 @@ def plot_severity_comparison(
     fig.tight_layout()
     return fig
 
-
-# ─────────────────────────────────────────────────────────────────────────────
-# 5. Sensitivity Analysis
-# ─────────────────────────────────────────────────────────────────────────────
 
 def plot_sensitivity(
     sweep_results: dict,  # { param_value : np.ndarray }
@@ -290,9 +266,6 @@ def plot_sensitivity(
     return fig
 
 
-# ─────────────────────────────────────────────────────────────────────────────
-# 6. Convergence of Monte Carlo Estimates
-# ─────────────────────────────────────────────────────────────────────────────
 
 def plot_convergence(losses: np.ndarray, confidence: float = 0.95) -> plt.Figure:
     """
@@ -303,7 +276,7 @@ def plot_convergence(losses: np.ndarray, confidence: float = 0.95) -> plt.Figure
     steps = np.arange(100, n + 1, max(1, n // 200))
 
     running_mean = [np.mean(losses[:k]) for k in steps]
-    running_var  = [float(np.quantile(losses[:k], confidence)) for k in steps]
+    running_var = [float(np.quantile(losses[:k], confidence)) for k in steps]
 
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(13, 4))
 
@@ -328,10 +301,6 @@ def plot_convergence(losses: np.ndarray, confidence: float = 0.95) -> plt.Figure
     fig.tight_layout()
     return fig
 
-
-# ─────────────────────────────────────────────────────────────────────────────
-# 7. Ruin Probability Curve
-# ─────────────────────────────────────────────────────────────────────────────
 
 def plot_ruin_curve(losses: np.ndarray, n_thresholds: int = 200) -> plt.Figure:
     """
